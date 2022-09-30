@@ -20,7 +20,6 @@ class Region(abstract.AbstractBaseModel):
     class Meta:
         abstract = True
 
-
 class Country(Region):
 
     class Meta:
@@ -29,7 +28,7 @@ class Country(Region):
 
 class NUTS1(Region):
 
-    country = models.ForeignKey(Country, related_name='subregions', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("country"))
+    superregion = models.ForeignKey(Country, related_name='subregions', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("country"))
 
     class Meta:
         verbose_name = _("geography.nuts1")
@@ -37,7 +36,7 @@ class NUTS1(Region):
 
 class NUTS2(Region):
 
-    nuts1 = models.ForeignKey(NUTS1, related_name="subregions", blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("geography.nuts1"))
+    superregion = models.ForeignKey(NUTS1, related_name="subregions", blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("geography.nuts1"))
     
     class Meta:
         verbose_name = _("geography.nuts2")
@@ -45,7 +44,7 @@ class NUTS2(Region):
 
 class NUTS3(Region):
 
-    nuts2 = models.ForeignKey(NUTS2, related_name="subregions", blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("geography.nuts2"))
+    superregion = models.ForeignKey(NUTS2, related_name="subregions", blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("geography.nuts2"))
 
     class Meta:
         verbose_name = _("geography.nuts3")
@@ -54,7 +53,7 @@ class NUTS3(Region):
 
 class LocalAdministrativeUnit(Region):
 
-    nuts3    = models.ForeignKey(NUTS3, related_name="laus", blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("geography.nuts3")) 
+    superregion    = models.ForeignKey(NUTS3, related_name="laus", blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("geography.nuts3")) 
 
     class Meta:
         verbose_name = _("geography.lau")
