@@ -10,8 +10,8 @@ from django.contrib.gis.db import models
 class Region(abstract.AbstractBaseModel):
 
     geometry = models.MultiPolygonField(verbose_name=_("geometry"), blank=True, null=True)
-    name = models.CharField(max_length=256, verbose_name=_("name"))
-    code = models.CharField(max_length=24, verbose_name=_("code"))
+    name = models.CharField(max_length=256, verbose_name=_("name"), blank=True, null=True)
+    code = models.CharField(max_length=24, verbose_name=_("code"), blank=True, null=True)
     year = models.IntegerField(blank=True, null=True, verbose_name=_("year"), default=0)
 
     def __str__(self) -> str:
@@ -72,26 +72,22 @@ class LocalAdministrativeUnit(Region):
 #     name    = models.CharField()
 #     code    = models.CharField()
 
-class Province(abstract.AbstractBaseModel):
+class Province(Region):
 
     country = models.ForeignKey(Country, related_name='provinces', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("country"))
-    geometry = models.MultiPolygonField(verbose_name=_("geometry"), blank=True, null=True)
-    name = models.CharField(max_length=256, verbose_name="name")
 
-    def __str__(self) -> str:
-        return str(self.name)
+    class Meta:
+        verbose_name = _("province")
+        verbose_name_plural = _("province.plural")
 
-class Parish(abstract.AbstractBaseModel):
+
+class Parish(Region):
     
     country = models.ForeignKey(Country, related_name='parishes', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_("country"))
-    geometry = models.MultiPolygonField(blank=True, null=True, verbose_name=_("geometry"))
-    name = models.CharField(max_length=256, verbose_name=_("name"))
-
+    
     class Meta:
         verbose_name = _("parish")
         verbose_name_plural = _("parish.plural")
 
-    def __str__(self) -> str:
-        return str(self.name)
 
     
