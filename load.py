@@ -67,7 +67,7 @@ def get_superregion_code(subregion_code: str):
 
     return subregion_code[:-1]
 
-def lau_to_nuts3(path: str, country_codes=COUNTRIES) -> Dict[str, str]:
+def lau_to_nuts3(path: str, country_code: str) -> Dict[str, str]:
     """Creates a mapping dict between LAUs and their corresponding many-to-one NUTS3
     regions.
 
@@ -79,19 +79,11 @@ def lau_to_nuts3(path: str, country_codes=COUNTRIES) -> Dict[str, str]:
         Dict[str, str]: A dictionary mapping LAUs to a NUTS3.
     """
 
-    df = pd.concat([
-        pd.read_excel(
-            path, 
-            sheet_name=country_code, 
-            dtype={"LAU CODE": "string", "NUTS 3 CODE": "string"}
-        ) 
-        for country_code in country_codes
-        ]) 
-
+    df = pd.read_excel(path, sheet_name=country_code, dtype={"LAU CODE": "string", "NUTS 3 CODE": "string"})
     df = df.replace({"NO061": "NO060", "NO062": "NO060"})
 
     return {
-        str(row["LAU CODE"]): str(row["NUTS 3 CODE"])
+        str(row["LAU CODE"]) : str(row["NUTS 3 CODE"])
         for idx, row in df.iterrows()
     }
 
@@ -179,33 +171,36 @@ def lau(path: str, correspondence_path: str, year: int, country_codes=COUNTRIES)
         country_codes (_type_, optional): The countries relevant for upload. Defaults to COUNTRIES.
     """
 
-    lau_to_nuts3_map = lau_to_nuts3(correspondence_path, country_codes)
 
     # Read the geojson to a dataframe
-    df = geojson_to_dataframe(path)
-    df = df[df["CNTR_CODE"].isin(country_codes)]
+    data = geojson_to_dataframe(path)
 
     # Get the correct current model
     model = LocalAdministrativeUnit
+    for country_code in country_codes:
+        
+        # Read the correct country
+        df = data[data["CNTR_CODE"] == country_code]
+        lau_to_nuts3_map = lau_to_nuts3(correspondence_path, country_code)
 
-    for (idx, row) in tqdm(df.iterrows(), total=len(df)):
+        for (idx, row) in tqdm(df.iterrows(), total=len(df)):
 
-        try:
-            nuts3 = NUTS3.objects.get(code=lau_to_nuts3_map[row["LAU_ID"]])
-        except:
-            print(row["LAU_ID"], lau_to_nuts3_map[row["LAU_ID"]])
-        # Get all the params
-        params = {
-                "name": row["LAU_NAME"],
-                "code": row["LAU_ID"],
-                "year": year,
-                "geometry": geojson_to_multipolygon(str(row["feature"]["geometry"])),
-                "superregion": nuts3
-        }
+            try:
+                nuts3 = NUTS3.objects.get(code=lau_to_nuts3_map[row["LAU_ID"]])
+            except:
+                print(row["LAU_ID"], lau_to_nuts3_map[row["LAU_ID"]])
+            # Get all the params
+            params = {
+                    "name": row["LAU_NAME"],
+                    "code": row["LAU_ID"],
+                    "year": year,
+                    "geometry": geojson_to_multipolygon(str(row["feature"]["geometry"])),
+                    "superregion": nuts3
+            }
 
-        # Create the model object. Since there is a hierarchical dependency
-        # they must be created on the database immediately
-        model.objects.create(**params)
+            # Create the model object. Since there is a hierarchical dependency
+            # they must be created on the database immediately
+            model.objects.create(**params)
 
 
 #%%
