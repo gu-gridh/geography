@@ -5,14 +5,14 @@ from django.contrib.gis import admin
 from diana.utils import get_fields, DEFAULT_EXCLUDE
 
 @admin.register(Country)
-class CountryAdmin(admin.OSMGeoAdmin):
+class CountryAdmin(admin.GISModelAdmin):
     fields = get_fields(Country, exclude=DEFAULT_EXCLUDE+["id"])
     list_display = ['name', 'code']
     list_filter = ['name', 'code']
     search_fields = ['name', 'code']
 
 @admin.register(Province)
-class PlaceAdmin(admin.OSMGeoAdmin):
+class PlaceAdmin(admin.GISModelAdmin):
     fields = get_fields(Province, exclude=DEFAULT_EXCLUDE+["id"])
     readonly_fields = []
     list_display = ['name', 'country']
@@ -21,7 +21,7 @@ class PlaceAdmin(admin.OSMGeoAdmin):
     # autocomplete_fields = ['name', 'country']
 
 @admin.register(LocalAdministrativeUnit)
-class LocalAdministrativeUnitAdmin(admin.OSMGeoAdmin):
+class LocalAdministrativeUnitAdmin(admin.GISModelAdmin):
     fields = get_fields(LocalAdministrativeUnit, exclude=DEFAULT_EXCLUDE+["id"])
     readonly_fields = []
     list_display =  ['name', 'code', 'superregion', 'get_nuts2', 'get_nuts1', 'get_country']
@@ -41,7 +41,7 @@ class LocalAdministrativeUnitAdmin(admin.OSMGeoAdmin):
         return obj.superregion.superregion
 
 @admin.register(NUTS3)
-class NUTS3Admin(admin.OSMGeoAdmin):
+class NUTS3Admin(admin.GISModelAdmin):
     fields = get_fields(NUTS3, exclude=DEFAULT_EXCLUDE+["id"])
     readonly_fields = []
     list_display =   ['name', 'code','superregion', 'get_nuts1', 'get_country']
@@ -57,7 +57,7 @@ class NUTS3Admin(admin.OSMGeoAdmin):
         return obj.superregion.superregion
 
 @admin.register(NUTS2)
-class NUTS2Admin(admin.OSMGeoAdmin):
+class NUTS2Admin(admin.GISModelAdmin):
     fields = get_fields(NUTS2, exclude=DEFAULT_EXCLUDE+["id"])
     readonly_fields = []
     list_display = ['name', 'code','superregion', 'get_country']
@@ -70,7 +70,7 @@ class NUTS2Admin(admin.OSMGeoAdmin):
 
 
 @admin.register(NUTS1)
-class NUTS1Admin(admin.OSMGeoAdmin):
+class NUTS1Admin(admin.GISModelAdmin):
     fields = get_fields(NUTS1, exclude=DEFAULT_EXCLUDE+["id"])
     readonly_fields = []
     list_display = ['name', 'code', 'superregion']
