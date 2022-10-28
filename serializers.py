@@ -1,9 +1,8 @@
-from diana.abstract.serializers import DynamicDepthSerializer
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from diana.utils import get_fields, DEFAULT_FIELDS
 from .models import *
 
-class CountrySerializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
+class CountrySerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = Country
@@ -11,7 +10,7 @@ class CountrySerializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
         geo_field = 'geometry'
 
 
-class LAUSerializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
+class LAUSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = LocalAdministrativeUnit
@@ -19,15 +18,22 @@ class LAUSerializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
         geo_field = 'geometry'
 
 
-class ProvinceSerializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
+class ProvinceSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = Province
         fields = get_fields(Province, exclude=DEFAULT_FIELDS)
         geo_field = 'geometry'
 
+class ParishSerializer(GeoFeatureModelSerializer):
 
-class NUTS1Serializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
+    class Meta:
+        model = Parish
+        fields = get_fields(Parish, exclude=DEFAULT_FIELDS)
+        geo_field = 'geometry'
+
+
+class NUTS1Serializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = NUTS1
@@ -35,7 +41,7 @@ class NUTS1Serializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
         geo_field = 'geometry'
 
 
-class NUTS2Serializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
+class NUTS2Serializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = NUTS2
@@ -43,7 +49,7 @@ class NUTS2Serializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
         geo_field = 'geometry'
 
 
-class NUTS3Serializer(GeoFeatureModelSerializer, DynamicDepthSerializer):
+class NUTS3Serializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = NUTS3
