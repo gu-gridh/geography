@@ -77,3 +77,12 @@ class NUTS1Admin(admin.GISModelAdmin):
     list_display = ['name', 'code', 'superregion']
     list_filter = ['name', 'superregion']
     search_fields = ['name', ]
+
+
+@admin.register(Parish)
+class ParishAdmin(admin.GISModelAdmin):
+    fields = get_fields(Parish, exclude=DEFAULT_EXCLUDE+["id"])
+    readonly_fields = [*DEFAULT_FIELDS]
+    list_display = ['name', 'code', 'country']
+    list_filter = ['name', 'country']
+    search_fields = ['name', ]
